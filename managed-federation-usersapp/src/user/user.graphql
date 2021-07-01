@@ -1,0 +1,10 @@
+  type User @key(fields: "id") {
+    id: ID!
+    name: String!
+    phoneNumber: String
+  }
+
+  extend type Query {
+    getUser(id: ID!): User
+    getUsers: [User]
+  }
