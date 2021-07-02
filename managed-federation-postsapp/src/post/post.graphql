@@ -14,3 +14,21 @@ extend type Query {
   getPost(id: ID!): Post!
   getPosts: [Post]
 }
+
+type Mutation {
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(id: ID! updatePostInput: UpdatePostInput!): Post!
+  removePost(id: ID!): Post
+}
+
+input CreatePostInput {
+  title: String!
+  body: String!
+  author: ID
+}
+
+input UpdatePostInput {
+  title: String
+  body: String
+  author: ID
+}

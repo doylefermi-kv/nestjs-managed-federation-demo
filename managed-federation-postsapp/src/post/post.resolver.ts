@@ -1,4 +1,12 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+import { CreatePostInput, UpdatePostInput } from 'src/schema/graphql.schema';
 import { PostService } from './post.service';
 
 @Resolver('Post')
@@ -15,8 +23,26 @@ export class PostResolver {
     return this.postService.findAll();
   }
 
+  @Mutation('createPost')
+  create(@Args('createPostInput') createPostInput: CreatePostInput) {
+    return this.postService.create(createPostInput);
+  }
+
+  @Mutation('updatePost')
+  update(
+    @Args('id') postId,
+    @Args('updatePostInput') updatePostInput: UpdatePostInput,
+  ) {
+    return this.postService.update(postId, updatePostInput);
+  }
+
+  @Mutation('removePost')
+  remove(@Args('id') id: string) {
+    return this.postService.remove(id);
+  }
+
   @ResolveField('author')
   author(@Parent() post: any) {
-    return { __typename: 'User', id: post.author };
+    return { __typename: 'User', id: post.authorId };
   }
 }

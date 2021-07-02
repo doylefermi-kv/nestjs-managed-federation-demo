@@ -6,8 +6,8 @@ export class UserResolver {
   constructor(private readonly postService: PostService) {}
 
   @ResolveField('posts')
-  posts(user) {
-    const posts = this.postService.findAll();
-    return posts.filter((post) => post.author === user.id);
+  async posts(user) {
+    const posts = await this.postService.findAll();
+    return posts.filter((post) => post.authorId === user.id);
   }
 }

@@ -1,18 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserInput, UpdateUserInput } from 'src/schema/graphql.schema';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  users = [
-    { id: '1', name: 'Doyle', phoneNumber: '1234567890' },
-    { id: '2', name: 'Fermi', phoneNumber: '9767432458' },
-    { id: '3', name: 'Test', phoneNumber: '6538902373' },
-  ];
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-  findOne(id: string) {
-    return this.users.find((user) => user.id === id);
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne(id);
+    if (user) {
+      return user;
+    }
+    throw new NotFoundException(`User ${id} does not exist`);
   }
 
-  findAll() {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
+
+  async create(createUserInput: CreateUserInput): Promise<User> {
+    const newUser = await this.userRepository.create(createUserInput);
+    const createdUser: User = await this.userRepository.save(newUser);
+
+    const savedUser = await this.userRepository.findOne(createdUser.id);
+    if (savedUser) {
+      return savedUser;
+    }
+    throw new BadRequestException('Could not create user');
+  }
+
+  async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
+    const newUser = await this.userRepository.create(updateUserInput);
+    await this.userRepository.update(id, newUser);
+    const updatedUser = await this.findOne(id);
+    return updatedUser;
+  }
+
+  async remove(id: string): Promise<User> {
+    const user = await this.findOne(id);
+    await this.userRepository.remove(user);
+    return { ...user, id: -1 };
   }
 }

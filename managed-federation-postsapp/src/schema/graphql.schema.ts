@@ -7,6 +7,24 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface CreatePostInput {
+    title: string;
+    body: string;
+    author?: string;
+}
+
+export interface UpdatePostInput {
+    title?: string;
+    body?: string;
+    author?: string;
+}
+
+export interface IMutation {
+    createPost(createPostInput: CreatePostInput): Post | Promise<Post>;
+    updatePost(id: string, updatePostInput: UpdatePostInput): Post | Promise<Post>;
+    removePost(id: string): Post | Promise<Post>;
+}
+
 export interface Post {
     id: string;
     title: string;

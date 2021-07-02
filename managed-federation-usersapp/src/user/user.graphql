@@ -8,3 +8,19 @@
     getUser(id: ID!): User
     getUsers: [User]
   }
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(id: ID! updateUserInput: UpdateUserInput!): User!
+  removeUser(id: ID!): User
+}
+
+input CreateUserInput {
+  name: String!
+  phoneNumber: String
+}
+
+input UpdateUserInput {
+  name: String
+  phoneNumber: String
+}
