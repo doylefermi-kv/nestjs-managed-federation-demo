@@ -1,11 +1,14 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { AuthGaurd } from 'src/authentication/authentication.gaurd';
 import { CreatePostInput, UpdatePostInput } from 'src/schema/graphql.schema';
 import { PostService } from './post.service';
 
@@ -24,21 +27,34 @@ export class PostResolver {
   }
 
   @Mutation('createPost')
-  create(@Args('createPostInput') createPostInput: CreatePostInput) {
-    return this.postService.create(createPostInput);
+  @UseGuards(AuthGaurd)
+  create(
+    @Args('createPostInput') createPostInput: CreatePostInput,
+    @Context('user') userId,
+  ) {
+    return this.postService.create(createPostInput, userId);
   }
 
   @Mutation('updatePost')
+  @UseGuards(AuthGaurd)
   update(
     @Args('id') postId,
     @Args('updatePostInput') updatePostInput: UpdatePostInput,
+    @Context('user') userId,
   ) {
-    return this.postService.update(postId, updatePostInput);
+    return this.postService.update(postId, updatePostInput, userId);
   }
 
   @Mutation('removePost')
-  remove(@Args('id') id: string) {
-    return this.postService.remove(id);
+  @UseGuards(AuthGaurd)
+  remove(@Args('id') id: string, @Context('user') userId) {
+    return this.postService.remove(id, userId);
+  }
+
+  @Query('me')
+  @UseGuards(AuthGaurd)
+  findAllFilterByUser(@Context('user') userId) {
+    return this.postService.findAllFilterByUser(userId);
   }
 
   @ResolveField('author')

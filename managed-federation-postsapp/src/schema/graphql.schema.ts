@@ -10,13 +10,11 @@
 export interface CreatePostInput {
     title: string;
     body: string;
-    author?: string;
 }
 
 export interface UpdatePostInput {
     title?: string;
     body?: string;
-    author?: string;
 }
 
 export interface IMutation {
@@ -35,6 +33,7 @@ export interface Post {
 export interface IQuery {
     getPost(id: string): Post | Promise<Post>;
     getPosts(): Post[] | Promise<Post[]>;
+    me(): Post[] | Promise<Post[]>;
 }
 
 export interface User {

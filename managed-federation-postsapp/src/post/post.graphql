@@ -13,6 +13,7 @@ extend type User @key(fields: "id") {
 extend type Query {
   getPost(id: ID!): Post!
   getPosts: [Post]
+  me: [Post]
 }
 
 type Mutation {
@@ -24,11 +25,9 @@ type Mutation {
 input CreatePostInput {
   title: String!
   body: String!
-  author: ID
 }
 
 input UpdatePostInput {
   title: String
   body: String
-  author: ID
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -26,10 +27,13 @@ export class PostService {
     return await this.postRepository.find();
   }
 
-  async create(createPostInput: CreatePostInput): Promise<Post> {
+  async create(
+    createPostInput: CreatePostInput,
+    byAuthor: number,
+  ): Promise<Post> {
     const newPost = await this.postRepository.create({
       ...createPostInput,
-      authorId: parseInt(createPostInput.author),
+      authorId: byAuthor,
     });
     const createdPost: Post = await this.postRepository.save(newPost);
 
@@ -40,19 +44,33 @@ export class PostService {
     throw new BadRequestException('Could not create post');
   }
 
-  async update(id: string, updatePostInput: UpdatePostInput): Promise<Post> {
-    const newPost = await this.postRepository.create({
-      ...updatePostInput,
-      authorId: parseInt(updatePostInput.author),
-    });
+  async update(
+    id: string,
+    updatePostInput: UpdatePostInput,
+    byAuthor: number,
+  ): Promise<Post> {
+    const post = await this.findOne(id);
+    if (post.authorId != byAuthor) {
+      throw new ForbiddenException('Post not owned by user cannot be updated');
+    }
+
+    const newPost = await this.postRepository.create(updatePostInput);
     await this.postRepository.update(id, newPost);
     const updatedPost = await this.findOne(id);
     return updatedPost;
   }
 
-  async remove(id: string): Promise<Post> {
+  async remove(id: string, byAuthor: number): Promise<Post> {
     const post = await this.findOne(id);
+    if (post.authorId != byAuthor) {
+      throw new ForbiddenException('Post not owned by user cannot be removed');
+    }
+
     await this.postRepository.remove(post);
     return { ...post, id: -1 };
+  }
+
+  async findAllFilterByUser(byAuthor: number): Promise<Post[]> {
+    return await this.postRepository.find({ where: { authorId: byAuthor } });
   }
 }

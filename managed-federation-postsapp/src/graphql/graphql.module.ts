@@ -11,6 +11,7 @@ import { join } from 'path';
       definitions: {
         path: join(process.cwd(), 'src/schema/graphql.schema.ts'),
       },
+      context: ({ req }) => ({ headers: req.headers }),
     }),
   ],
 })
