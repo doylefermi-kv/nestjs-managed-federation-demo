@@ -1,0 +1,14 @@
+type Mutation {
+  login(user: UserLoginInput!): UserAuthResult!
+}
+
+input UserLoginInput {
+  phoneNumber: String!
+  password: String!
+}
+
+type UserAuthResult {
+  expiresInSeconds: Int!,
+  token: String!
+  user: User!
+}

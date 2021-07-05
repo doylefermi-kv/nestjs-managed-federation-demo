@@ -4,6 +4,7 @@ import { AppGraphQLModule } from './graphql/graphql.module';
 import { UserModule } from './user/user.module';
 import * as Joi from '@hapi/joi';
 import { ConfigModule } from '@nestjs/config';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigModule } from '@nestjs/config';
     AppGraphQLModule,
     UserModule,
     DatabaseModule,
+    AuthenticationModule,
   ],
   controllers: [],
   providers: [],

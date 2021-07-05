@@ -8,6 +8,9 @@ export class User {
   @Column()
   public name!: string;
 
+  @Column({ unique: true })
+  public phoneNumber!: string;
+
   @Column()
-  public phoneNumber: string;
+  public password!: string;
 }

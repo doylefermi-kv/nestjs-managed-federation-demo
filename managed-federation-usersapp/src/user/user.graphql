@@ -1,7 +1,8 @@
   type User @key(fields: "id") {
     id: ID!
     name: String!
-    phoneNumber: String
+    phoneNumber: String!
+    password: String!
   }
 
   extend type Query {
@@ -18,6 +19,7 @@ type Mutation {
 input CreateUserInput {
   name: String!
   phoneNumber: String
+  password: String!
 }
 
 input UpdateUserInput {
