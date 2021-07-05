@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
-import { GraphQLGatewayModule } from '@nestjs/graphql';
+import { ConfigModule } from '@nestjs/config';
+import { GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from '@nestjs/graphql';
+import { BuildServiceModule } from './gatewaybuildservice/buildservice.module';
+import { GatewayConfigModule } from './gatewayconfig/gatewayconfig.module';
+import { GatewayConfigService } from './gatewayconfig/gatewayconfig.service';
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRoot({
-      server: {
-        cors: true,
-      },
-      gateway: {
-        serviceList: [
-          { name: 'user', url: 'http://localhost:5001/graphql' },
-          { name: 'post', url: 'http://localhost:5002/graphql' },
-        ],
-      },
+    ConfigModule.forRoot(),
+    GraphQLGatewayModule.forRootAsync({
+      useClass: GatewayConfigService,
+      imports: [GatewayConfigModule, BuildServiceModule, ConfigModule],
+      inject: [GatewayConfigService, GATEWAY_BUILD_SERVICE],
     }),
   ],
   controllers: [],
